@@ -322,7 +322,7 @@ def main():
 
     # Footer
     st.markdown("---")
-    st.markdown("**Created by Syed Sharjeel Jafri** • Built with 💡 by xAI", unsafe_allow_html=True)
+    st.markdown("**Created by Syed Sharjeel Jafri**", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
