@@ -7,46 +7,56 @@ import plotly.graph_objs as go
 from datetime import datetime, timedelta
 
 # Streamlit page configuration
-st.set_page_config(page_title="Trading Strategy Dashboard", layout="wide")
+st.set_page_config(page_title="Cyberpunk Trading Terminal", layout="wide")
 
-# Custom Wealthsimple-inspired CSS + JS Animations
+# Cyberpunk CSS + JS Animations
 st.markdown("""
     <style>
-    /* Global styles */
+    /* Global Cyberpunk Styles */
     body {
-        background-color: #F7F7F9;
-        font-family: 'Inter', sans-serif;
+        background-color: #0A0A0A;
+        font-family: 'Orbitron', sans-serif;
+        color: #00FFFF;
     }
     .stApp {
-        background: linear-gradient(135deg, #F7F7F9 0%, #E8ECEF 100%);
+        background: linear-gradient(135deg, #0A0A0A 0%, #1A1A2E 100%);
     }
     h1 {
-        font-size: 2.5em;
-        color: #1A3C34;
-        font-weight: 700;
+        font-size: 2.8em;
+        color: #FF007F;
+        text-shadow: 0 0 10px #FF007F;
+        animation: flicker 1.5s infinite alternate;
+    }
+    h2 {
+        color: #9D00FF;
+        text-shadow: 0 0 5px #9D00FF;
     }
     .stButton>button {
-        background: linear-gradient(90deg, #2A7D6F 0%, #3DA08F 100%);
-        color: white;
-        border-radius: 12px;
+        background: none;
+        border: 2px solid #00FFFF;
+        color: #00FFFF;
+        border-radius: 8px;
         padding: 12px 24px;
         font-weight: 600;
+        text-shadow: 0 0 5px #00FFFF;
         transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background: linear-gradient(90deg, #3DA08F 0%, #4ABDA0 100%);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: #00FFFF;
+        color: #0A0A0A;
+        box-shadow: 0 0 15px #00FFFF;
     }
     .stSlider>div>div>div {
-        background-color: #2A7D6F;
+        background-color: #FF007F;
         border-radius: 10px;
     }
     .metric-card {
-        background: white;
-        border-radius: 12px;
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid #9D00FF;
+        border-radius: 8px;
         padding: 16px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        opacity: 0; /* For fade-in animation */
+        box-shadow: 0 0 10px rgba(157, 0, 255, 0.5);
+        opacity: 0;
     }
     .metric-card.visible {
         opacity: 1;
@@ -54,10 +64,11 @@ st.markdown("""
         transform: translateY(0);
     }
     .sidebar .sidebar-content {
-        background: white;
-        border-radius: 12px;
+        background: rgba(10, 10, 10, 0.9);
+        border: 1px solid #00FFFF;
+        border-radius: 8px;
         padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
         transform: translateX(-100%);
     }
     .sidebar.visible {
@@ -65,6 +76,10 @@ st.markdown("""
         transition: transform 0.6s ease-out;
     }
     .chart-container {
+        background: rgba(26, 26, 46, 0.7);
+        border: 1px solid #FF007F;
+        border-radius: 8px;
+        padding: 10px;
         opacity: 0;
         transform: translateX(-50px);
     }
@@ -73,28 +88,36 @@ st.markdown("""
         transform: translateX(0);
         transition: all 0.8s ease-out;
     }
+    @keyframes flicker {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# JavaScript for animations
+# JavaScript for Cyberpunk Animations
 components.html("""
     <script>
-    // Pulse animation for button
+    // Button Pulse & Neon Flash
     const button = document.querySelector('.stButton button');
     button.classList.add('pulse');
     button.addEventListener('click', () => {
         button.classList.remove('pulse');
-        button.classList.add('ripple');
-        setTimeout(() => button.classList.remove('ripple'), 600);
+        button.classList.add('flash');
+        setTimeout(() => button.classList.remove('flash'), 600);
     });
 
-    // Sidebar slide-in
+    // Sidebar Glitch Slide-In
     document.addEventListener('DOMContentLoaded', () => {
         const sidebar = document.querySelector('.sidebar .sidebar-content');
-        setTimeout(() => sidebar.classList.add('visible'), 100);
+        setTimeout(() => {
+            sidebar.classList.add('visible');
+            sidebar.classList.add('glitch');
+            setTimeout(() => sidebar.classList.remove('glitch'), 500);
+        }, 100);
     });
 
-    // Styles for animations
+    // Animation Styles
     const style = document.createElement('style');
     style.innerHTML = `
         .pulse {
@@ -102,15 +125,25 @@ components.html("""
         }
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.05); box-shadow: 0 0 10px #00FFFF; }
             100% { transform: scale(1); }
         }
-        .ripple {
-            animation: ripple 0.6s ease-out;
+        .flash {
+            animation: flash 0.6s ease-out;
         }
-        @keyframes ripple {
-            0% { box-shadow: 0 0 0 0 rgba(74, 189, 160, 0.7); }
-            100% { box-shadow: 0 0 0 20px rgba(74, 189, 160, 0); }
+        @keyframes flash {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
+            100% { box-shadow: 0 0 20px 10px rgba(0, 255, 255, 0); }
+        }
+        .glitch {
+            animation: glitch 0.3s linear infinite;
+        }
+        @keyframes glitch {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-5px) skew(5deg); }
+            40% { transform: translateX(5px) skew(-5deg); }
+            60% { transform: translateX(-3px); }
+            100% { transform: translateX(0); }
         }
     `;
     document.head.appendChild(style);
@@ -118,30 +151,30 @@ components.html("""
 """, height=0)
 
 # Title and description
-st.title("📈 Trading Strategy Dashboard")
-st.markdown("**EMA Crossover & RSI Analysis** — Powered by Precision", unsafe_allow_html=True)
+st.title("⚡️ Cyberpunk Trading Terminal")
+st.markdown("**EMA X RSI Matrix** — Jack In, Trade On", unsafe_allow_html=True)
 
 # Sidebar - Strategy Parameters
 with st.sidebar:
-    st.header("⚙️ Strategy Settings")
-    ticker = st.text_input("Stock Ticker", "AAPL").upper()
+    st.header("🔧 Control Grid")
+    ticker = st.text_input("Target Node", "AAPL", help="Enter stock ticker").upper()
     col1, col2 = st.columns(2)
     with col1:
-        start_date = st.date_input("Start Date", datetime.now() - timedelta(days=365))
+        start_date = st.date_input("Start Sync", datetime.now() - timedelta(days=365))
     with col2:
-        end_date = st.date_input("End Date", datetime.now())
+        end_date = st.date_input("End Sync", datetime.now())
     
-    st.subheader("Indicators")
-    short_ema = st.slider("Short EMA Period", 5, 50, 20, help="Faster-moving average")
-    long_ema = st.slider("Long EMA Period", 20, 200, 50, help="Slower-moving average")
-    rsi_period = st.slider("RSI Period", 5, 30, 14, help="Momentum sensitivity")
-    rsi_overbought = st.slider("RSI Overbought", 50, 90, 70, help="Upper threshold")
-    rsi_oversold = st.slider("RSI Oversold", 10, 50, 30, help="Lower threshold")
+    st.subheader("Signal Arrays")
+    short_ema = st.slider("Short EMA Pulse", 5, 50, 20, help="Fast signal wave")
+    long_ema = st.slider("Long EMA Pulse", 20, 200, 50, help="Slow signal wave")
+    rsi_period = st.slider("RSI Core", 5, 30, 14, help="Momentum reactor")
+    rsi_overbought = st.slider("Overbought Threshold", 50, 90, 70, help="Upper limit")
+    rsi_oversold = st.slider("Oversold Threshold", 10, 50, 30, help="Lower limit")
     
-    st.subheader("Execution")
-    position_mode = st.radio("Signal Mode", ["Flip on Signal", "Hold Until Exit"], help="How trades are executed")
+    st.subheader("Execution Protocol")
+    position_mode = st.radio("Trade Mode", ["Flip on Signal", "Hold Until Exit"], help="Execution logic")
     
-    run_button = st.button("Run Strategy")
+    run_button = st.button("Execute Trade Run")
 
 # Indicator Calculations
 def calculate_indicators(df, short_ema, long_ema, rsi_period):
@@ -188,76 +221,82 @@ def calculate_performance(df, positions):
 # Price Chart
 def plot_price_chart(df):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df.index, y=df['Close'], name='Price', line=dict(color='#2A7D6F', width=2)))
-    fig.add_trace(go.Scatter(x=df.index, y=df['Short_EMA'], name='Short EMA', line=dict(color='#4ABDA0', width=1.5, dash='dash')))
-    fig.add_trace(go.Scatter(x=df.index, y=df['Long_EMA'], name='Long EMA', line=dict(color='#8AC6B8', width=1.5, dash='dash')))
+    fig.add_trace(go.Scatter(x=df.index, y=df['Close'], name='Price Feed', line=dict(color='#00FFFF', width=2)))
+    fig.add_trace(go.Scatter(x=df.index, y=df['Short_EMA'], name='Short EMA', line=dict(color='#FF007F', width=1.5, dash='dash')))
+    fig.add_trace(go.Scatter(x=df.index, y=df['Long_EMA'], name='Long EMA', line=dict(color='#9D00FF', width=1.5, dash='dash')))
     buys = df[df['Signal'] == 1]
     sells = df[df['Signal'] == -1]
-    fig.add_trace(go.Scatter(x=buys.index, y=buys['Close'], mode='markers', name='Buy', marker=dict(symbol='circle', color='#2ECC71', size=10)))
-    fig.add_trace(go.Scatter(x=sells.index, y=sells['Close'], mode='markers', name='Sell', marker=dict(symbol='circle', color='#E74C3C', size=10)))
+    fig.add_trace(go.Scatter(x=buys.index, y=buys['Close'], mode='markers', name='Buy Signal', marker=dict(symbol='triangle-up', color='#00FF00', size=12, line=dict(width=1, color='#00FF00'))))
+    fig.add_trace(go.Scatter(x=sells.index, y=sells['Close'], mode='markers', name='Sell Signal', marker=dict(symbol='triangle-down', color='#FF0000', size=12, line=dict(width=1, color='#FF0000'))))
     fig.update_layout(
-        title="Price & Signals",
-        title_font=dict(size=20, color="#1A3C34"),
-        xaxis_title="Date",
-        yaxis_title="Price ($)",
-        template="plotly_white",
+        title="Price Matrix",
+        title_font=dict(size=20, color="#FF007F", family="Orbitron"),
+        xaxis_title="Time Sync",
+        yaxis_title="Credit Flow ($)",
+        template="plotly_dark",
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
         hovermode="x unified",
         xaxis_rangeslider_visible=True,
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=40, b=20),
+        font=dict(color="#00FFFF")
     )
     return fig
 
 # RSI Chart
 def plot_rsi_chart(df):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df.index, y=df['RSI'], name='RSI', line=dict(color='#9B59B6', width=2)))
-    fig.add_hline(y=rsi_overbought, line=dict(color='#E74C3C', dash='dash'), annotation_text="Overbought", annotation_position="top right")
-    fig.add_hline(y=rsi_oversold, line=dict(color='#2ECC71', dash='dash'), annotation_text="Oversold", annotation_position="bottom right")
+    fig.add_trace(go.Scatter(x=df.index, y=df['RSI'], name='RSI Pulse', line=dict(color='#9D00FF', width=2)))
+    fig.add_hline(y=rsi_overbought, line=dict(color='#FF0000', dash='dash'), annotation_text="Overbought Zone", annotation_position="top right")
+    fig.add_hline(y=rsi_oversold, line=dict(color='#00FF00', dash='dash'), annotation_text="Oversold Zone", annotation_position="bottom right")
     fig.update_layout(
-        title="RSI Momentum",
-        title_font=dict(size=20, color="#1A3C34"),
-        xaxis_title="Date",
+        title="Momentum Core",
+        title_font=dict(size=20, color="#FF007F", family="Orbitron"),
+        xaxis_title="Time Sync",
         yaxis_title="RSI",
-        template="plotly_white",
+        template="plotly_dark",
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
         hovermode="x unified",
         xaxis_rangeslider_visible=True,
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=40, b=20),
+        font=dict(color="#00FFFF")
     )
     return fig
 
 # Data Fetching
 def fetch_data(ticker, start_date, end_date):
     try:
-        with st.spinner("Fetching market data..."):
+        with st.spinner("Hacking Market Feed..."):
             data = yf.download(ticker, start=start_date, end=end_date, progress=False)
         if data.empty:
-            st.error(f"No data for {ticker}. Try another ticker or date range.")
+            st.error(f"Node {ticker} offline. Recheck coordinates.")
             return None
         return data
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"Grid Failure: {e}")
         return None
 
 # Main Logic
 def main():
     if not run_button:
-        st.markdown("**Tune your strategy and hit 'Run' to see the magic happen.**", unsafe_allow_html=True)
+        st.markdown("**Jack into the grid. Set parameters, execute the run.**", unsafe_allow_html=True)
         return
 
     if start_date >= end_date:
-        st.error("Start date must be before end date.")
+        st.error("Time sync error: Start must predate End.")
         return
 
     data = fetch_data(ticker, start_date, end_date)
     if data is None:
         return
 
-    st.success(f"Data loaded for {ticker} — {len(data)} days analyzed.")
+    st.success(f"Node {ticker} synced — {len(data)} cycles processed.")
     df = calculate_indicators(data.copy(), short_ema, long_ema, rsi_period)
     positions = generate_positions(df['Signal'], mode=position_mode)
     total_return, sharpe_ratio, max_drawdown, num_trades, win_rate, cagr = calculate_performance(df, positions)
 
-    # Charts with animation
+    # Charts with Neon Animation
     st.markdown('<div class="chart-container" id="price-chart">', unsafe_allow_html=True)
     st.plotly_chart(plot_price_chart(df), use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -265,37 +304,37 @@ def main():
     st.plotly_chart(plot_rsi_chart(df), use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Metrics with fade-in animation
-    st.subheader("Performance Snapshot")
+    # Metrics with Glitchy Fade-In
+    st.subheader("System Diagnostics")
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown('<div class="metric-card" id="metric1">', unsafe_allow_html=True)
-        st.metric("Total Return", f"{total_return:.2%}", help="Cumulative return of the strategy")
+        st.metric("Total Return", f"{total_return:.2%}", help="Net credit gain")
         st.markdown('</div>', unsafe_allow_html=True)
     with col2:
         st.markdown('<div class="metric-card" id="metric2">', unsafe_allow_html=True)
-        st.metric("Sharpe Ratio", f"{sharpe_ratio:.2f}" if not np.isnan(sharpe_ratio) else "N/A", help="Risk-adjusted return")
+        st.metric("Sharpe Ratio", f"{sharpe_ratio:.2f}" if not np.isnan(sharpe_ratio) else "N/A", help="Risk efficiency")
         st.markdown('</div>', unsafe_allow_html=True)
     with col3:
         st.markdown('<div class="metric-card" id="metric3">', unsafe_allow_html=True)
-        st.metric("Max Drawdown", f"{max_drawdown:.2%}", help="Largest peak-to-trough loss")
+        st.metric("Max Drawdown", f"{max_drawdown:.2%}", help="Worst crash")
         st.markdown('</div>', unsafe_allow_html=True)
 
     col4, col5, col6 = st.columns(3)
     with col4:
         st.markdown('<div class="metric-card" id="metric4">', unsafe_allow_html=True)
-        st.metric("Trades", f"{num_trades}", help="Total number of trades executed")
+        st.metric("Trade Count", f"{num_trades}", help="Operations executed")
         st.markdown('</div>', unsafe_allow_html=True)
     with col5:
         st.markdown('<div class="metric-card" id="metric5">', unsafe_allow_html=True)
-        st.metric("Win Rate", f"{win_rate:.2%}" if not np.isnan(win_rate) else "N/A", help="Percentage of winning trades")
+        st.metric("Win Rate", f"{win_rate:.2%}" if not np.isnan(win_rate) else "N/A", help="Success ratio")
         st.markdown('</div>', unsafe_allow_html=True)
     with col6:
         st.markdown('<div class="metric-card" id="metric6">', unsafe_allow_html=True)
-        st.metric("CAGR", f"{cagr:.2%}", help="Compound annual growth rate")
+        st.metric("CAGR", f"{cagr:.2%}", help="Annualized growth")
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Trigger animations after run
+    # Animation Trigger
     components.html("""
         <script>
         setTimeout(() => {
@@ -314,15 +353,15 @@ def main():
         </script>
     """, height=0)
 
-    # Signals
-    st.subheader("Recent Signals")
+    # Signals Table
+    st.subheader("Signal Logs")
     signal_df = df[df['Signal'] != 0][['Close', 'Short_EMA', 'Long_EMA', 'RSI', 'Signal']].tail(10).copy()
-    signal_df['Signal'] = signal_df['Signal'].map({1: 'Buy', -1: 'Sell'})
+    signal_df['Signal'] = signal_df['Signal'].map({1: 'Buy [UP]', -1: 'Sell [DOWN]'})
     st.dataframe(signal_df.style.format({'Close': '${:.2f}', 'Short_EMA': '${:.2f}', 'Long_EMA': '${:.2f}', 'RSI': '{:.2f}'}))
 
     # Footer
     st.markdown("---")
-    st.markdown("**Created by Syed Sharjeel Jafri**", unsafe_allow_html=True)
+    st.markdown("**Hacked by Syed Sharjeel Jafri** • Powered by xAI Grid", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
