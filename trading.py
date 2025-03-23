@@ -361,7 +361,7 @@ def main():
 
     # Footer
     st.markdown("---")
-    st.markdown("**Hacked by Syed Sharjeel Jafri** • Powered by xAI Grid", unsafe_allow_html=True)
+    st.markdown("**Hacked by Syed Sharjeel Jafri**", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
